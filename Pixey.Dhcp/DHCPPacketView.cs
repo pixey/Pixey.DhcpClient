@@ -714,7 +714,6 @@ namespace Pixey.Dhcp
             }
         }
 
-
         public TimeSpan TimeElapsed
         {
             get { return TimeSpan.FromSeconds(Packet.secs); }

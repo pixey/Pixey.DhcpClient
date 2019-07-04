@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 
 namespace Pixey.Dhcp.Utility
@@ -27,6 +28,13 @@ namespace Pixey.Dhcp.Utility
                     (Convert.ToUInt32(buffer[offset + 0]) << 8) |
                     (Convert.ToUInt32(buffer[offset + 1]))
                 );
+        }
+
+        public static byte[] ParseMacAddress(string mac)
+        {
+            return mac.Split(':', '-')
+                .Select(x => Convert.ToByte(x, 16))
+                .ToArray();
         }
     }
 }

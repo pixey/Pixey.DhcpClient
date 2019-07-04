@@ -1,38 +1,102 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using Pixey.Dhcp.Enums;
+using Pixey.Dhcp.HardwareAddressTypes;
+using Pixey.Dhcp.Utility;
 
 namespace Pixey.Dhcp
 {
     public class DhcpClient : IDhcpClient
     {
-        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+        private const int DhcpServerPort = 67;
+        private const int DhcpClientPort = 68;
 
-        public Task<DHCPPacketView> RequestIpAddress()
+        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(20);
+        private static readonly IPEndPoint BroadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, DhcpServerPort);
+        //private static readonly IPEndPoint BroadcastEndpoint = new IPEndPoint(IPAddress.Parse("192.168.1.2"), DhcpServerPort);
+
+        private readonly IPEndPoint _udpClientEndpoint;
+
+        // TODO: Add any overload
+
+        public DhcpClient(IPAddress sourceIp)
         {
-            return RequestIpAddress(IPAddress.Any);
+            _udpClientEndpoint = new IPEndPoint(sourceIp, DhcpClientPort);
         }
 
-        public async Task<DHCPPacketView> RequestIpAddress(IPAddress sourceIp)
+        public async Task<DHCPPacketView> RequestIpAddress(string macAddress)
         {
             try
             {
-                var clientEndpoint = new IPEndPoint(sourceIp, 67);
-
-                using (var udpClient = new UdpClient(clientEndpoint))
+                var udpClient = new UdpClient();
                 {
-                    await SendDiscoveryPacket(udpClient); // TODO: Add architecture
+                    udpClient.EnableBroadcast = true;
+                    udpClient.ExclusiveAddressUse = false;
 
-                    var listenTask = udpClient.ReceiveAsync();
+                    udpClient.Client.Bind(_udpClientEndpoint);
+                    // udpClient.Connect(BroadcastEndpoint);
 
-                    if (!listenTask.Wait(Timeout))
-                    {
-                        throw new TimeoutException();
-                    }
+                    //var listenTask = udpClient.ReceiveAsync();
 
-                    return new DHCPPacketView(listenTask.Result.Buffer);
+                    var from = new IPEndPoint(0, 0);
+
+                    //Task.Run(() =>
+                    //{
+                    //    while (true)
+                    //    {
+                    //        var recvBuffer = udpClient.Receive(ref from);
+                    //        Console.WriteLine(Encoding.UTF8.GetString(recvBuffer));
+                    //    }
+                    //});
+
+                    //udpClient.BeginReceive(result =>
+                    //{
+                    //    var from = new IPEndPoint(0, 0);
+                    //    var data = udpClient.EndReceive(result, ref from);
+
+                    //    var dhcpResult = new DHCPPacketView(data);
+
+                    //    Console.WriteLine("Dummy");
+                    //}, null);
+
+
+                    //Task.Factory.StartNew(() =>
+                    //{
+                    //    var bytes = udpClient.Receive(ref from);
+
+                    //    Console.WriteLine("Message received");
+                    //});
+
+                    //udpClient.ReceiveAsync()
+                    //    .ContinueWith(result =>
+                    //    {
+                    //        var bytes = result.Result;
+
+                    //        Console.WriteLine("Received response...");
+                    //    }).Start();
+
+                    Console.WriteLine("Sending discovery packet...");
+                    await SendDiscoveryPacket(udpClient, macAddress); // TODO: Add architecture
+
+                    Console.WriteLine("Waiting to receive...");
+                    var bytes = udpClient.Receive(ref from);
+
+                    //IPEndPoint from = BroadcastEndpoint;
+                    //var responseBytes = udpClient.Receive(ref from);
+
+                    //if (!listenTask.Wait(Timeout))
+                    //{
+                    //    throw new TimeoutException();
+                    //}
+
+                    // return new DHCPPacketView(response.Buffer);
+
+                    return new DHCPPacketView(bytes);
+                    // throw new NotImplementedException();
+                    return null;
                 }
             }
             catch (Exception e)
@@ -43,25 +107,31 @@ namespace Pixey.Dhcp
             }
         }
 
-        private async Task SendDiscoveryPacket(UdpClient udpClient)
+        private async Task SendDiscoveryPacket(UdpClient udpClient, string mac)
         {
-            var discoveryPacket = new DHCPPacketView(DHCPMessageType.DHCPDISCOVER);
-            
+            var discoveryPacketView = new DHCPPacketView(DHCPMessageType.DHCPDISCOVER);
+            var random = new Random();
+
+            var macBytes = ParserTools.ParseMacAddress(mac);
+            discoveryPacketView.ClientHardwareAddress = new EthernetClientHardwareAddress(macBytes);
+            discoveryPacketView.TransactionId = (uint)random.Next(100000, 10000000);
+            discoveryPacketView.BroadcastFlag = true;
+
+
             // Client architecture = Option 93      => ClientSystem
             // User class = 77                      => UserClass, might need to be added
 
-            discoveryPacket.ClassId = new byte[20];
+            // discoveryPacket.ClassId = new byte[20];
 
-            var discoveryBytes = await discoveryPacket.GetBytes().ConfigureAwait(false);
+            var discoveryBytes = await discoveryPacketView.GetBytes();
 
-            await udpClient.SendAsync(discoveryBytes, discoveryBytes.Length).ConfigureAwait(false);
+            //await udpClient.SendAsync(discoveryBytes, discoveryBytes.Length, BroadcastEndpoint).ConfigureAwait(false);
+            udpClient.Send(discoveryBytes, discoveryBytes.Length, BroadcastEndpoint);
         }
     }
 
     public interface IDhcpClient
     {
-        Task<DHCPPacketView> RequestIpAddress();
-
-        Task<DHCPPacketView> RequestIpAddress(IPAddress sourceIp);
+        Task<DHCPPacketView> RequestIpAddress(string mac);
     }
 }
