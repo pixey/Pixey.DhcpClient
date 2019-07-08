@@ -31,7 +31,7 @@ using Pixey.Dhcp.Options;
 
 namespace Pixey.Dhcp
 {
-    class DHCPPacketParser
+    internal class DHCPPacketParser
     {
         /// <summary>
         /// DHCP packet parser based on RFC2131 (https://tools.ietf.org/html/rfc2131)
@@ -59,7 +59,7 @@ namespace Pixey.Dhcp
                 giaddr = ReadIPAddress(buffer, 24),
                 chaddr = ReadClientHardwareAddress((HardwareAddressType)buffer[1], buffer, 28),
                 sname = Encoding.ASCII.GetString(buffer, 44, 64).Trim(),
-                file = Encoding.ASCII.GetString(buffer, 108, 128).Trim(),
+                file = Encoding.ASCII.GetString(buffer, 108, 128).Trim().TrimEnd('\0'),
                 magicNumber = Read32UnsignedBE(buffer, 236)
             };
 

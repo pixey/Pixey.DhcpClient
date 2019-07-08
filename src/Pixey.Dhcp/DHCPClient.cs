@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using Pixey.Dhcp.Enums;
 using Pixey.Dhcp.HardwareAddressTypes;
@@ -20,14 +19,12 @@ namespace Pixey.Dhcp
 
         private readonly IPEndPoint _udpClientEndpoint;
 
-        // TODO: Add any overload
-
-        public DhcpClient(IPAddress sourceIp)
+        public DhcpClient()
         {
-            _udpClientEndpoint = new IPEndPoint(sourceIp, DhcpClientPort);
+            _udpClientEndpoint = new IPEndPoint(IPAddress.Any, DhcpClientPort);
         }
 
-        public async Task<DHCPPacketView> RequestIpAddress(string macAddress)
+        public async Task<DHCPPacketView> DiscoverDhcpServers(string macAddress)
         {
             try
             {
@@ -95,8 +92,6 @@ namespace Pixey.Dhcp
                     // return new DHCPPacketView(response.Buffer);
 
                     return new DHCPPacketView(bytes);
-                    // throw new NotImplementedException();
-                    return null;
                 }
             }
             catch (Exception e)
@@ -105,6 +100,10 @@ namespace Pixey.Dhcp
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public void Dispose()
+        {
         }
 
         private async Task SendDiscoveryPacket(UdpClient udpClient, string mac)
@@ -130,8 +129,15 @@ namespace Pixey.Dhcp
         }
     }
 
-    public interface IDhcpClient
+    public interface IDhcpClient : IDisposable
     {
-        Task<DHCPPacketView> RequestIpAddress(string mac);
+        Task<DHCPPacketView> DiscoverDhcpServers(string mac);
+    }
+
+    public class BroadcastParameters
+    {
+        public string PhysicalAddress { get; set; }
+
+        public string ClientSystem { get; set; }
     }
 }

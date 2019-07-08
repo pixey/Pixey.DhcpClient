@@ -1,0 +1,37 @@
+# Network with predefined IP range
+# Two DHCP server containers
+
+version: "3.7"
+
+services:
+  dhcp1:
+    build: ./dhcp-image
+    networks:
+      - internal
+    volumes:
+      - ./dhcpd1.conf:/etc/dhcp/dhcpd.conf:ro
+
+  dhcp2:
+    build: ./dhcp-image
+    networks:
+      - internal
+    volumes:
+      - ./dhcpd2.conf:/etc/dhcp/dhcpd.conf:ro
+
+  tests_runner:
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    networks:
+      - internal
+    # depends_on:
+    #   - dhcp1
+    #   - dhcp2
+    volumes:
+      - ../src:/src:rw
+      - ./scripts:/scripts:ro
+
+networks:
+    internal:
+      driver: bridge
+      ipam:
+        config:
+          - subnet: "172.16.10.0/24"
