@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Pixey.Dhcp.Enums;
 using Pixey.Dhcp.HardwareAddressTypes;
-using Pixey.Dhcp.Utility;
 
 namespace Pixey.Dhcp
 {
@@ -24,7 +23,7 @@ namespace Pixey.Dhcp
             _udpClientEndpoint = new IPEndPoint(IPAddress.Any, DhcpClientPort);
         }
 
-        public async Task<DHCPPacketView> DiscoverDhcpServers(string macAddress)
+        public async Task<DhcpPacketView> DiscoverDhcpServers(ClientHardwareAddress clientHardwareAddress)
         {
             try
             {
@@ -76,7 +75,7 @@ namespace Pixey.Dhcp
                     //    }).Start();
 
                     Console.WriteLine("Sending discovery packet...");
-                    await SendDiscoveryPacket(udpClient, macAddress); // TODO: Add architecture
+                    await SendDiscoveryPacket(udpClient, clientHardwareAddress); // TODO: Add architecture
 
                     Console.WriteLine("Waiting to receive...");
                     var bytes = udpClient.Receive(ref from);
@@ -91,7 +90,7 @@ namespace Pixey.Dhcp
 
                     // return new DHCPPacketView(response.Buffer);
 
-                    return new DHCPPacketView(bytes);
+                    return new DhcpPacketView(bytes);
                 }
             }
             catch (Exception e)
@@ -106,13 +105,12 @@ namespace Pixey.Dhcp
         {
         }
 
-        private async Task SendDiscoveryPacket(UdpClient udpClient, string mac)
+        private async Task SendDiscoveryPacket(UdpClient udpClient, ClientHardwareAddress clientHardwareAddress)
         {
-            var discoveryPacketView = new DHCPPacketView(DHCPMessageType.DHCPDISCOVER);
+            var discoveryPacketView = new DhcpPacketView(DHCPMessageType.DHCPDISCOVER);
             var random = new Random();
 
-            var macBytes = ParserTools.ParseMacAddress(mac);
-            discoveryPacketView.ClientHardwareAddress = new EthernetClientHardwareAddress(macBytes);
+            discoveryPacketView.ClientHardwareAddress = clientHardwareAddress;
             discoveryPacketView.TransactionId = (uint)random.Next(100000, 10000000);
             discoveryPacketView.BroadcastFlag = true;
 
@@ -131,7 +129,7 @@ namespace Pixey.Dhcp
 
     public interface IDhcpClient : IDisposable
     {
-        Task<DHCPPacketView> DiscoverDhcpServers(string mac);
+        Task<DhcpPacketView> DiscoverDhcpServers(ClientHardwareAddress macAddress);
     }
 
     public class BroadcastParameters

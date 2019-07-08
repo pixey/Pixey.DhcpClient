@@ -21,7 +21,7 @@ namespace Pixey.Dhcp.UnitTests
         [MemberData(nameof(ParseMessageTypeData))]
         public void ParseMessageType(byte[] packetBytes, DHCPMessageType expectedMessageType)
         {
-            var packetView = new DHCPPacketView(packetBytes);
+            var packetView = new DhcpPacketView(packetBytes);
 
             Assert.Equal(expectedMessageType, packetView.DHCPMessageType);
         }
@@ -29,7 +29,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseYourIp()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Equal(IPAddress.Parse("192.168.1.101"), packetView.YourIP);
         }
@@ -37,7 +37,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseNextServerIp()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Equal(IPAddress.Parse("192.168.1.13"), packetView.NextServerIP);
         }
@@ -45,7 +45,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseBootFile()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Equal("ipxe.efi", packetView.BootFile);
         }
@@ -53,7 +53,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseSubnet()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Equal(IPAddress.Parse("255.255.255.0"), packetView.SubnetMask);
         }
@@ -61,7 +61,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseDhcpServer()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Equal(IPAddress.Parse("192.168.1.2"), packetView.DHCPServerIdentifier);
         }
@@ -69,7 +69,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseDnsServers()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Contains(packetView.DomainNameServers, dns => dns.Equals(IPAddress.Parse("8.8.8.8")));
         }
@@ -77,7 +77,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseRouter()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Contains(packetView.Routers, dns => dns.Equals(IPAddress.Parse("192.168.1.1")));
         }
@@ -85,7 +85,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseTransactionId()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
             var expectedTransactionIdBytes = new byte[] { 0x00, 0x1b, 0x0c, 0x61 }.Reverse().ToArray();
 
             Assert.Equal(BitConverter.ToUInt32(expectedTransactionIdBytes), packetView.TransactionId);
@@ -94,7 +94,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseYourIpLeaseTime()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             Assert.Equal(TimeSpan.FromSeconds(600), packetView.IPAddressLeaseTime);
         }
@@ -102,7 +102,7 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public void ParseMacAddress()
         {
-            var packetView = new DHCPPacketView(DhcpSamplePackets.Discover);
+            var packetView = new DhcpPacketView(DhcpSamplePackets.Discover);
 
             var expectedAddress = new EthernetClientHardwareAddress(new byte[] { 0xde, 0xad, 0xc0, 0xde, 0xca, 0xfe });
 
@@ -124,10 +124,10 @@ namespace Pixey.Dhcp.UnitTests
         [Fact]
         public async Task SerializeAndDeserializeWithEqualValues()
         {
-            var expectedPacketView = new DHCPPacketView(DhcpSamplePackets.Offer);
+            var expectedPacketView = new DhcpPacketView(DhcpSamplePackets.Offer);
 
             var expectedPacketBytes = await expectedPacketView.GetBytes();
-            var actualPacketView = new DHCPPacketView(expectedPacketBytes);
+            var actualPacketView = new DhcpPacketView(expectedPacketBytes);
 
             Assert.Equal(expectedPacketView.ClientHardwareAddress, actualPacketView.ClientHardwareAddress);
             Assert.Equal(expectedPacketView.DHCPServerIdentifier, actualPacketView.DHCPServerIdentifier);

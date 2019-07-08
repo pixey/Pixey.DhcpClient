@@ -1,26 +1,4 @@
-﻿/// The MIT License(MIT)
-/// 
-/// Copyright(c) 2017 Conscia Norway AS
-/// 
-/// Permission is hereby granted, free of charge, to any person obtaining a copy
-/// of this software and associated documentation files (the "Software"), to deal
-/// in the Software without restriction, including without limitation the rights
-/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-/// copies of the Software, and to permit persons to whom the Software is
-/// furnished to do so, subject to the following conditions:
-/// 
-/// The above copyright notice and this permission notice shall be included in all
-/// copies or substantial portions of the Software.
-/// 
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-/// SOFTWARE.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,13 +11,13 @@ using Pixey.Dhcp.Options;
 
 namespace Pixey.Dhcp
 {
-    public class DHCPPacketView
+    public class DhcpPacketView
     {
-        public const int DHCPBroadcastFlag = 0x8000;
+        public const int DhcpBroadcastFlag = 0x8000;
 
         public DHCPPacket Packet { get; set; }
 
-        public DHCPPacketView(DHCPMessageType messageType)
+        public DhcpPacketView(DHCPMessageType messageType)
         {
             Packet = new DHCPPacket();
             DHCPMessageType = messageType;
@@ -55,12 +33,12 @@ namespace Pixey.Dhcp
             RelayAgentIP = IPAddress.Any;
         }
 
-        public DHCPPacketView(byte[] buffer)
+        public DhcpPacketView(byte[] buffer)
         {
-            Packet = DHCPPacketParser.Parse(buffer);
+            Packet = DhcpPacketParser.Parse(buffer);
         }
 
-        public DHCPPacketView(DHCPPacket packet)
+        public DhcpPacketView(DHCPPacket packet)
         {
             Packet = packet;
         }
@@ -185,12 +163,12 @@ namespace Pixey.Dhcp
 
         public bool BroadcastFlag
         {
-            get { return (Packet.flags & DHCPBroadcastFlag) == DHCPBroadcastFlag; }
+            get { return (Packet.flags & DhcpBroadcastFlag) == DhcpBroadcastFlag; }
             set {
                 if (value)
-                    Packet.flags = Packet.flags | DHCPBroadcastFlag;
+                    Packet.flags = Packet.flags | DhcpBroadcastFlag;
                 else
-                    Packet.flags = ~(~Packet.flags | DHCPBroadcastFlag);
+                    Packet.flags = ~(~Packet.flags | DhcpBroadcastFlag);
             }
         }
 

@@ -8,12 +8,12 @@ namespace Pixey.Dhcp.IntegrationTests
         [Fact]
         public async Task ReturnDhcpPackets()
         {
-            using (var client = new DhcpClient())
-            {
-                var result = await client.DiscoverDhcpServers("de:ad:c0:de:ca:fe").ConfigureAwait(false);
+            //using (var client = new DhcpClient())
+            //{
+            //    var result = await client.DiscoverDhcpServers("de:ad:c0:de:ca:fe").ConfigureAwait(false);
 
                 
-            }
+            //}
         }
     }
 }

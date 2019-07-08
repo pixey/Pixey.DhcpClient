@@ -58,6 +58,7 @@ namespace Pixey.Dhcp.HardwareAddressTypes
         {
             return HardwareAddress;
         }
+
         public override bool Equals(object obj)
         {
             var other = obj as GenericClientHardwareAddress;
@@ -66,10 +67,12 @@ namespace Pixey.Dhcp.HardwareAddressTypes
 
             return HardwareAddress.SequenceEqual(other.HardwareAddress);
         }
+
         public override int GetHashCode()
         {
             return HardwareAddress.GetHashCode();
         }
+
         public override ClientHardwareAddress Clone()
         {
             return new GenericClientHardwareAddress(GetBytes());

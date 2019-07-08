@@ -1,4 +1,6 @@
-﻿namespace Pixey.Dhcp.Console
+﻿using Pixey.Dhcp.HardwareAddressTypes;
+
+namespace Pixey.Dhcp.Console
 {
     class Program
     {
@@ -7,7 +9,8 @@
             var client = new DhcpClient();
 
             //var result = client.RequestIpAddress("00-15-5D-00-50-31").Result;
-            var result = client.DiscoverDhcpServers("de:ad:c0:de:ca:fe").Result;
+            var clientMac = new EthernetClientHardwareAddress("de:ad:c0:de:ca:fe");
+            var result = client.DiscoverDhcpServers(clientMac).Result;
 
             System.Console.WriteLine("Success");
             //System.Console.WriteLine(result);
