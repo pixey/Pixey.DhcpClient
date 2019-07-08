@@ -16,13 +16,13 @@ namespace Pixey.Dhcp
         /// </summary>
         /// <param name="buffer">The input buffer to parse.</param>
         /// <returns>A parsed packet structure or null</returns>
-        public static DHCPPacket Parse(byte[] buffer)
+        public static DhcpPacket Parse(byte[] buffer)
         {
             if (buffer.Length < 240)
                 throw new ArgumentException("The minimum DHCP packet size if 236 bytes", "buffer");
 
             // Parse BOOTP Options
-            var result = new DHCPPacket
+            var result = new DhcpPacket
             {
                 op = (MessageOpCode)buffer[0],
                 htype = (HardwareAddressType)buffer[1],
@@ -41,7 +41,7 @@ namespace Pixey.Dhcp
                 magicNumber = Read32UnsignedBE(buffer, 236)
             };
 
-            if(result.magicNumber != DHCPPacket.DHCPMagicNumber)
+            if(result.magicNumber != DhcpPacket.DhcpMagicNumber)
                 throw new Exception("Received packet may be a BOOTP packet but is not a valid DHCP packet as it is missing the magic number at offset 236.");
 
             var index = 240;

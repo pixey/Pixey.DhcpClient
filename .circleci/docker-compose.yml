@@ -1,6 +1,3 @@
-# Network with predefined IP range
-# Two DHCP server containers
-
 version: "3.7"
 
 services:

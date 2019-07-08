@@ -15,18 +15,18 @@ namespace Pixey.Dhcp
     {
         public const int DhcpBroadcastFlag = 0x8000;
 
-        public DHCPPacket Packet { get; set; }
+        public DhcpPacket Packet { get; set; }
 
         public DhcpPacketView(DHCPMessageType messageType)
         {
-            Packet = new DHCPPacket();
+            Packet = new DhcpPacket();
             DHCPMessageType = messageType;
             Hops = 0;
             TimeElapsed = TimeSpan.Zero;
             BroadcastFlag = false;
             Packet.sname = string.Empty;
             Packet.file = string.Empty;
-            Packet.magicNumber = DHCPPacket.DHCPMagicNumber;
+            Packet.magicNumber = DhcpPacket.DhcpMagicNumber;
             ClientIP = IPAddress.Any;
             YourIP = IPAddress.Any;
             NextServerIP = IPAddress.Any;
@@ -38,7 +38,7 @@ namespace Pixey.Dhcp
             Packet = DhcpPacketParser.Parse(buffer);
         }
 
-        public DhcpPacketView(DHCPPacket packet)
+        public DhcpPacketView(DhcpPacket packet)
         {
             Packet = packet;
         }
@@ -61,7 +61,7 @@ namespace Pixey.Dhcp
             WritePadded(Packet.chaddr.GetBytes(), 16, ref buffer, ref index);
             WritePaddedASCII(Packet.sname, 64, ref buffer, ref index);
             WritePaddedASCII(Packet.file, 128, ref buffer, ref index);
-            WriteUInt32(DHCPPacket.DHCPMagicNumber, ref buffer, ref index);
+            WriteUInt32(DhcpPacket.DhcpMagicNumber, ref buffer, ref index);
             if (index != 240)
                 throw new Exception("Packet format is just plain wrong!!!");
 

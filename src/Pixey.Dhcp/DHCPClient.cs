@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -7,14 +8,13 @@ using Pixey.Dhcp.HardwareAddressTypes;
 
 namespace Pixey.Dhcp
 {
-    public class DhcpClient : IDhcpClient
+    public class DhcpClient // : IDhcpClient
     {
         private const int DhcpServerPort = 67;
         private const int DhcpClientPort = 68;
 
         private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(20);
         private static readonly IPEndPoint BroadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, DhcpServerPort);
-        //private static readonly IPEndPoint BroadcastEndpoint = new IPEndPoint(IPAddress.Parse("192.168.1.2"), DhcpServerPort);
 
         private readonly IPEndPoint _udpClientEndpoint;
 
@@ -23,10 +23,12 @@ namespace Pixey.Dhcp
             _udpClientEndpoint = new IPEndPoint(IPAddress.Any, DhcpClientPort);
         }
 
-        public async Task<DhcpPacketView> DiscoverDhcpServers(ClientHardwareAddress clientHardwareAddress)
+        public async Task<IReadOnlyList<DhcpPacketView>> DiscoverDhcpServers(ClientHardwareAddress clientHardwareAddress)
         {
             try
             {
+                var results = new List<DhcpPacketView>();
+
                 var udpClient = new UdpClient();
                 {
                     udpClient.EnableBroadcast = true;
@@ -78,7 +80,12 @@ namespace Pixey.Dhcp
                     await SendDiscoveryPacket(udpClient, clientHardwareAddress); // TODO: Add architecture
 
                     Console.WriteLine("Waiting to receive...");
-                    var bytes = udpClient.Receive(ref from);
+
+                    var bytes1 = udpClient.Receive(ref from);
+                    results.Add(new DhcpPacketView(bytes1));
+
+                    var bytes2 = udpClient.Receive(ref from);
+                    results.Add(new DhcpPacketView(bytes2));
 
                     //IPEndPoint from = BroadcastEndpoint;
                     //var responseBytes = udpClient.Receive(ref from);
@@ -90,7 +97,8 @@ namespace Pixey.Dhcp
 
                     // return new DHCPPacketView(response.Buffer);
 
-                    return new DhcpPacketView(bytes);
+                    return results;
+                    //return new DhcpPacketView(bytes);
                 }
             }
             catch (Exception e)
@@ -127,15 +135,24 @@ namespace Pixey.Dhcp
         }
     }
 
-    public interface IDhcpClient : IDisposable
-    {
-        Task<DhcpPacketView> DiscoverDhcpServers(ClientHardwareAddress macAddress);
-    }
+    //public interface IDhcpClient : IDisposable
+    //{
+    //    Task<DhcpPacketView> DiscoverDhcpServers(ClientHardwareAddress macAddress);
+    //}
 
-    public class BroadcastParameters
+    public class DiscoveryParameters
     {
+        public DiscoveryParameters()
+        {
+            // TODO: Set details
+        }
+
         public string PhysicalAddress { get; set; }
 
-        public string ClientSystem { get; set; }
+        public string ClientSystemArchitecture { get; set; }
+
+        public string UserClass { get; set; }
+
+        public TimeSpan Timeout { get; set; }
     }
 }
