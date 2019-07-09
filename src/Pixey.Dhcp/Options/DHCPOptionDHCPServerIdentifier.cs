@@ -48,7 +48,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeIPAddress(stream, DHCPOptionType.DHCPServerId, ServerIdentifier);
+            return SerializeIPAddress(stream, DhcpOptionType.DHCPServerId, ServerIdentifier);
         }
     }
 }

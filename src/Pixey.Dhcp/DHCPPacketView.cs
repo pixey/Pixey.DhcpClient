@@ -456,12 +456,12 @@ namespace Pixey.Dhcp
             }
         }
 
-        public List<DHCPOptionType> ParameterList
+        public List<DhcpOptionType> ParameterList
         {
             get
             {
                 var record = (DHCPOptionParameterList)Packet.Options.Where(x => x.GetType() == typeof(DHCPOptionParameterList)).FirstOrDefault();
-                return (record == null) ? new List<DHCPOptionType>() : record.ParameterList;
+                return (record == null) ? new List<DhcpOptionType>() : record.ParameterList;
             }
             set
             {

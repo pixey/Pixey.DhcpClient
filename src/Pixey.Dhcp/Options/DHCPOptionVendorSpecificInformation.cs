@@ -151,7 +151,7 @@ namespace Pixey.Dhcp.Options
             var totalLength = serializedSubOptions.Select(x => x.Length).Sum();
 
             var buffer = new byte[2 + totalLength];
-            buffer[0] = Convert.ToByte(DHCPOptionType.VIVendorSpecificInformation);
+            buffer[0] = Convert.ToByte(DhcpOptionType.VIVendorSpecificInformation);
             buffer[1] = Convert.ToByte(totalLength);
 
             int index = 2;

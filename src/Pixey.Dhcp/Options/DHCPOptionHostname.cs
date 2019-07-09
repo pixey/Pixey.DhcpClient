@@ -49,7 +49,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeASCII(stream, DHCPOptionType.Hostname, Hostname);
+            return SerializeASCII(stream, DhcpOptionType.Hostname, Hostname);
         }
     }
 }

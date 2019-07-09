@@ -29,12 +29,12 @@ namespace Pixey.Dhcp.Options
 {
     public class DHCPOptionUnrecognized : DHCPOption
     {
-        DHCPOptionType OptionNumber;
+        DhcpOptionType OptionNumber;
         public byte[] Data { get; set; }
 
         public DHCPOptionUnrecognized(int optionNumber, int optionLength, byte [] buffer, long offset)
         {
-            OptionNumber = (DHCPOptionType)optionNumber;
+            OptionNumber = (DhcpOptionType)optionNumber;
             Data = new byte[optionLength];
             Array.Copy(buffer, offset, Data, 0, optionLength);
         }

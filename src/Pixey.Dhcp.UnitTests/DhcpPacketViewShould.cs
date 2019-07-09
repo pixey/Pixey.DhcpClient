@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Pixey.Dhcp.Enums;
 using Pixey.Dhcp.HardwareAddressTypes;
+using Pixey.Dhcp.Options;
 using Xunit;
 
 namespace Pixey.Dhcp.UnitTests
@@ -130,20 +131,49 @@ namespace Pixey.Dhcp.UnitTests
             Assert.Equal(expectedClientSystem, packetView.ClientSystem);
         }
 
-        //[Fact]
-        //public void ParseUserClass()
-        //{
-        //    var packetView = new DHCPPacketView(DhcpSamplePackets.Offer);
+        [Fact]
+        public void ParseUserClass()
+        {
+            var packetView = new DhcpPacketView(DhcpSamplePackets.DiscoverIpxeUserClass);
 
-        //    throw new NotImplementedException();
-        //}
+            Assert.Equal("iPXE", packetView.UserClass);
+        }
 
         [Fact]
         public async Task SerializeAndDeserializeWithEqualValues()
         {
-            var expectedPacketView = new DhcpPacketView(DhcpSamplePackets.Offer);
+            var expectedPacketView = new DhcpPacketView(new DhcpPacket());
+            expectedPacketView.ClientSystem = ClientSystem.EFI_x86_64;
+            expectedPacketView.ClientIP = IPAddress.Parse("192.168.1.1");
+            expectedPacketView.YourIP = IPAddress.Parse("192.168.1.2");
+            expectedPacketView.NextServerIP = IPAddress.Parse("192.168.1.3");
+            expectedPacketView.RelayAgentIP = IPAddress.Parse("192.168.1.4");
+            expectedPacketView.ClientHardwareAddress = new EthernetClientHardwareAddress("AA:BB:CC:DD:EE:FF");
+            expectedPacketView.ServerHostname = "ServerHostname";
+            expectedPacketView.BootFile = "BootFile";
+            expectedPacketView.UserClass = "UserClass";
+            expectedPacketView.DHCPMessageType = DHCPMessageType.DHCPDISCOVER;
+            expectedPacketView.IPAddressLeaseTime = TimeSpan.FromSeconds(600);
+            expectedPacketView.TransactionId = 123456789;
+            expectedPacketView.AddressRequest = IPAddress.Parse("192.168.1.5");
+            expectedPacketView.BroadcastAddress = IPAddress.Parse("192.168.1.6");
+            expectedPacketView.BroadcastFlag = true;
+            expectedPacketView.ClassId = new byte[] { 0x0c, 0xaa, 0x84 };
+            expectedPacketView.ClasslessStaticRoutes = new List<DHCPOptionClasslessStaticRoute.RouteEntry>
+            {
+                new DHCPOptionClasslessStaticRoute.RouteEntry
+                {
+                    NextHop = IPAddress.Parse("192.168.1.7"),
+                    Prefix = new DHCPOptionClasslessStaticRoute.NetworkPrefix
+                    {
+                        Length = 28,
+                        Prefix = IPAddress.Parse("192.168.1.8")
+                    }
+                }
+            };
 
             var expectedPacketBytes = await expectedPacketView.GetBytes();
+
             var actualPacketView = new DhcpPacketView(expectedPacketBytes);
 
             Assert.Equal(expectedPacketView.ClientHardwareAddress, actualPacketView.ClientHardwareAddress);
@@ -156,6 +186,22 @@ namespace Pixey.Dhcp.UnitTests
             Assert.Equal(expectedPacketView.SubnetMask, actualPacketView.SubnetMask);
             Assert.Equal(expectedPacketView.Routers, actualPacketView.Routers);
             Assert.Equal(expectedPacketView.DomainNameServers, actualPacketView.DomainNameServers);
+            Assert.Equal(expectedPacketView.UserClass, actualPacketView.UserClass);
+            Assert.Equal(expectedPacketView.ClientSystem, actualPacketView.ClientSystem);
+            Assert.Equal(expectedPacketView.DHCPMessageType, actualPacketView.DHCPMessageType);
+            Assert.Equal(expectedPacketView.IPAddressLeaseTime, actualPacketView.IPAddressLeaseTime);
+
+            Assert.Equal(expectedPacketView.ClasslessStaticRoutes?.Count, actualPacketView.ClasslessStaticRoutes?.Count);
+
+            for (int i = 0; i < expectedPacketView.ClasslessStaticRoutes.Count; i++)
+            {
+                Assert.Equal(expectedPacketView.ClasslessStaticRoutes[i], actualPacketView.ClasslessStaticRoutes[i]);
+            }
+
+            Assert.Equal(expectedPacketView.ClassId, actualPacketView.ClassId);
+            Assert.Equal(expectedPacketView.BroadcastFlag, actualPacketView.BroadcastFlag);
+            Assert.Equal(expectedPacketView.BroadcastAddress, actualPacketView.BroadcastAddress);
+            Assert.Equal(expectedPacketView.AddressRequest, actualPacketView.AddressRequest);
         }
     }
 }

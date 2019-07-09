@@ -48,7 +48,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeUInt16(stream, DHCPOptionType.DHCPMaxMsgSize, Convert.ToUInt16(MaximumMessageSize));
+            return SerializeUInt16(stream, DhcpOptionType.DHCPMaxMsgSize, Convert.ToUInt16(MaximumMessageSize));
         }
     }
 }

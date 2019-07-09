@@ -51,7 +51,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeIPAddressList(stream, DHCPOptionType.TimeServer, TimeServers);
+            return SerializeIPAddressList(stream, DhcpOptionType.TimeServer, TimeServers);
         }
     }
 }

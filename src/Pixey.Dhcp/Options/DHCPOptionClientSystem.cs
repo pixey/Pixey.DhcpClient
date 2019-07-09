@@ -28,7 +28,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeInt32(stream, DHCPOptionType.ClientSystem, (int)ClientSystem);
+            return SerializeUInt16(stream, DhcpOptionType.ClientSystem, (ushort)ClientSystem);
         }
     }
 }

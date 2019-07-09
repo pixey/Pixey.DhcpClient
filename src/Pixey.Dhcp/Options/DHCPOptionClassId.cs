@@ -59,7 +59,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeBytes(stream, DHCPOptionType.ClassId, ClassId);
+            return SerializeBytes(stream, DhcpOptionType.ClassId, ClassId);
         }
     }
 }

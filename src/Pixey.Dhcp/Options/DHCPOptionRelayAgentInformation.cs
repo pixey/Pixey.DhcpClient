@@ -176,7 +176,7 @@ namespace Pixey.Dhcp.Options
                 throw new Exception("Neither agent circuit ID or agent remote ID are present");
 
             byte[] buffer = new byte[2];
-            buffer[0] = Convert.ToByte(DHCPOptionType.RelayAgentInformation);
+            buffer[0] = Convert.ToByte(DhcpOptionType.RelayAgentInformation);
             buffer[1] = Convert.ToByte(circuitIdPart.Length + remoteIdPart.Length);
             await stream.WriteAsync(buffer, 0, buffer.Length);
             await stream.WriteAsync(circuitIdPart, 0, circuitIdPart.Length);

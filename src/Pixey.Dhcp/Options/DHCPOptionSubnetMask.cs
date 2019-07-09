@@ -48,7 +48,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeIPAddress(stream, DHCPOptionType.SubnetMask, SubnetMask);
+            return SerializeIPAddress(stream, DhcpOptionType.SubnetMask, SubnetMask);
         }
     }
 }

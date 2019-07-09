@@ -50,7 +50,7 @@ namespace Pixey.Dhcp
             while (index < buffer.Length)
             {
                 int optionCode = Convert.ToInt32(buffer[index++]);
-                if ((DHCPOptionType)optionCode == DHCPOptionType.End)
+                if ((DhcpOptionType)optionCode == DhcpOptionType.End)
                     break;
 
                 int length = Convert.ToInt32(buffer[index++]);
@@ -135,69 +135,69 @@ namespace Pixey.Dhcp
 
         static DHCPOption ParseDHCPOption(int optionNumber, int optionLength, byte [] buffer, long offset)
         {
-            switch((DHCPOptionType)optionNumber)
+            switch((DhcpOptionType)optionNumber)
             {
-                case DHCPOptionType.AddressRequest:
+                case DhcpOptionType.AddressRequest:
                     return new DHCPOptionRequestedIPAddress(optionLength, buffer, offset);
-                case DHCPOptionType.AddressTime:
+                case DhcpOptionType.AddressTime:
                     return new DHCPOptionIPAddressLeaseTime(optionLength, buffer, offset);
-                case DHCPOptionType.BootfileName:
+                case DhcpOptionType.BootfileName:
                     return new DHCPOptionTFTPBootfile(optionLength, buffer, offset);
-                case DHCPOptionType.BroadcastAddress:
+                case DhcpOptionType.BroadcastAddress:
                     return new DHCPOptionBroadcastAddress(optionLength, buffer, offset);
-                case DHCPOptionType.ClassId:
+                case DhcpOptionType.ClassId:
                     return new DHCPOptionClassId(optionLength, buffer, offset);
-                case DHCPOptionType.ClasslessStaticRouteOption:
+                case DhcpOptionType.ClasslessStaticRouteOption:
                     return new DHCPOptionClasslessStaticRoute(optionLength, buffer, offset);
-                case DHCPOptionType.ClientId:
+                case DhcpOptionType.ClientId:
                     return new DHCPOptionClientId(optionLength, buffer, offset);
-                case DHCPOptionType.DHCPMaxMsgSize:
+                case DhcpOptionType.DHCPMaxMsgSize:
                     return new DHCPOptionMaximumMessageSize(optionLength, buffer, offset);
-                case DHCPOptionType.DHCPMessage:
+                case DhcpOptionType.DHCPMessage:
                     return new DHCPOptionDHCPMessage(optionLength, buffer, offset);
-                case DHCPOptionType.DHCPMsgType:
+                case DhcpOptionType.DHCPMsgType:
                     return new DHCPOptionDHCPMessageType(optionLength, buffer, offset);
-                case DHCPOptionType.DHCPServerId:
+                case DhcpOptionType.DHCPServerId:
                     return new DHCPOptionDHCPServerIdentifier(optionLength, buffer, offset);
-                case DHCPOptionType.DomainName:
+                case DhcpOptionType.DomainName:
                     return new DHCPOptionDomainName(optionLength, buffer, offset);
-                case DHCPOptionType.DomainServer:
+                case DhcpOptionType.DomainServer:
                     return new DHCPOptionDomainNameServer(optionLength, buffer, offset);
-                case DHCPOptionType.Hostname:
+                case DhcpOptionType.Hostname:
                     return new DHCPOptionHostname(optionLength, buffer, offset);
-                case DHCPOptionType.NETBIOSNameSrv:
+                case DhcpOptionType.NETBIOSNameSrv:
                     return new DHCPOptionNetBIOSOverTCPIPNameServer(optionLength, buffer, offset);
-                case DHCPOptionType.NTPServers:
+                case DhcpOptionType.NTPServers:
                     return new DHCPOptionNTPServer(optionLength, buffer, offset);
-                case DHCPOptionType.Pad:
+                case DhcpOptionType.Pad:
                     return new DHCPOptionPad(optionLength, buffer, offset);
-                case DHCPOptionType.ParameterList:
+                case DhcpOptionType.ParameterList:
                     return new DHCPOptionParameterList(optionLength, buffer, offset);
-                case DHCPOptionType.RebindingTime:
+                case DhcpOptionType.RebindingTime:
                     return new DHCPOptionRebindingTimeValue(optionLength, buffer, offset);
-                case DHCPOptionType.RelayAgentInformation:
+                case DhcpOptionType.RelayAgentInformation:
                     return new DHCPOptionRelayAgentInformation(optionLength, buffer, offset);
-                case DHCPOptionType.RenewalTime:
+                case DhcpOptionType.RenewalTime:
                     return new DHCPOptionRenewalTimeValue(optionLength, buffer, offset);
-                case DHCPOptionType.RootPath:
+                case DhcpOptionType.RootPath:
                     return new DHCPOptionRootPath(optionLength, buffer, offset);
-                case DHCPOptionType.Router:
+                case DhcpOptionType.Router:
                     return new DHCPOptionRouter(optionLength, buffer, offset);
-                case DHCPOptionType.ServerName:
+                case DhcpOptionType.ServerName:
                     return new DHCPOptionTFTPServerName(optionLength, buffer, offset);
-                case DHCPOptionType.SubnetMask:
+                case DhcpOptionType.SubnetMask:
                     return new DHCPOptionSubnetMask(optionLength, buffer, offset);
-                case DHCPOptionType.TFTPserveraddress:
+                case DhcpOptionType.TFTPserveraddress:
                     return new DHCPOptionTFTPServer(optionLength, buffer, offset);
-                case DHCPOptionType.TimeOffset:
+                case DhcpOptionType.TimeOffset:
                     return new DHCPOptionTimeOffset(optionLength, buffer, offset);
-                case DHCPOptionType.TimeServer:
+                case DhcpOptionType.TimeServer:
                     return new DHCPOptionTimeServer(optionLength, buffer, offset);
-                case DHCPOptionType.UserClass:
+                case DhcpOptionType.UserClass:
                     return new DHCPOptionUserClass(optionLength, buffer, offset);
-                case DHCPOptionType.ClientSystem:
+                case DhcpOptionType.ClientSystem:
                     return new DHCPOptionClientSystem(optionLength, buffer, offset);
-                case DHCPOptionType.VIVendorSpecificInformation:
+                case DhcpOptionType.VIVendorSpecificInformation:
                     return new DHCPOptionVendorSpecificInformation(optionLength, buffer, offset);
                 default:
                     return new DHCPOptionUnrecognized(optionNumber, optionLength, buffer, offset);

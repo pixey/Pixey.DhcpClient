@@ -102,10 +102,12 @@ namespace Pixey.Dhcp.Options
 
             var header = new byte[]
             {
-                Convert.ToByte(DHCPOptionType.ClasslessStaticRouteOption),
+                Convert.ToByte(DhcpOptionType.ClasslessStaticRouteOption),
                 Convert.ToByte(encodedEntries.Select(x => x.Length).Sum())
             };
+
             await stream.WriteAsync(header, 0, header.Length);
+
             foreach(var entry in encodedEntries)
                 await stream.WriteAsync(entry, 0, entry.Length);
         }

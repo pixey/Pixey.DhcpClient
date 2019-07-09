@@ -53,7 +53,7 @@ namespace Pixey.Dhcp.Options
         {
             var addressBuffer = _clientId.GetBytes();
             var buffer = new byte[3 + addressBuffer.Length];
-            buffer[0] = Convert.ToByte(DHCPOptionType.ClientId);
+            buffer[0] = Convert.ToByte(DhcpOptionType.ClientId);
             buffer[1] = Convert.ToByte(1 + addressBuffer.Length);
             buffer[2] = Convert.ToByte(IdType);
             Array.Copy(addressBuffer, 0, buffer, 3, addressBuffer.Length);

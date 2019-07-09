@@ -23,7 +23,7 @@
 
 namespace Pixey.Dhcp.Enums
 {
-    public enum DHCPOptionType
+    public enum DhcpOptionType
     {
         Pad = 0,                    // DHCPOptionPad
         SubnetMask = 1,             // DHCPOptionSubnetMask

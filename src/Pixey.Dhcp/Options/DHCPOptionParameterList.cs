@@ -31,14 +31,14 @@ namespace Pixey.Dhcp.Options
 {
     public class DHCPOptionParameterList : DHCPOption
     {
-        private List<DHCPOptionType> _parameterList = new List<DHCPOptionType>();
-        public List<DHCPOptionType> ParameterList
+        private List<DhcpOptionType> _parameterList = new List<DhcpOptionType>();
+        public List<DhcpOptionType> ParameterList
         {
             get { return _parameterList; }
             set { _parameterList = value.Select(x => x).ToList(); }
         }
 
-        public DHCPOptionParameterList(List<DHCPOptionType> parameterList)
+        public DHCPOptionParameterList(List<DhcpOptionType> parameterList)
         {
             ParameterList = parameterList;
         }
@@ -46,7 +46,7 @@ namespace Pixey.Dhcp.Options
         public DHCPOptionParameterList(int optionLength, byte[] buffer, long offset)
         {
             for (int i = 0; i < optionLength; i++)
-                _parameterList.Add((DHCPOptionType)buffer[offset + i]);
+                _parameterList.Add((DhcpOptionType)buffer[offset + i]);
         }
 
         public override string ToString()
@@ -56,7 +56,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeBytes(stream, DHCPOptionType.ParameterList, ParameterList.Select(x => Convert.ToByte(x)).ToArray());
+            return SerializeBytes(stream, DhcpOptionType.ParameterList, ParameterList.Select(x => Convert.ToByte(x)).ToArray());
         }
     }
 }

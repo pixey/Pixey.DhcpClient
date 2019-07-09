@@ -49,7 +49,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeTimeSpan(stream, DHCPOptionType.RenewalTime, RenewalTime);
+            return SerializeTimeSpan(stream, DhcpOptionType.RenewalTime, RenewalTime);
         }
     }
 }

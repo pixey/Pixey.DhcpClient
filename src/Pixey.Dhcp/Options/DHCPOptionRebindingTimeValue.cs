@@ -48,7 +48,7 @@ namespace Pixey.Dhcp.Options
         }
         public override Task Serialize(Stream stream)
         {
-            return SerializeTimeSpan(stream, DHCPOptionType.RebindingTime, RebindingTime);
+            return SerializeTimeSpan(stream, DhcpOptionType.RebindingTime, RebindingTime);
         }
     }
 }

@@ -100,7 +100,7 @@ namespace Pixey.Dhcp.Options
             buffer[offset + 1] = Convert.ToByte(value & 0xFF);
         }
 
-        protected Task SerializeIPAddress(Stream stream, DHCPOptionType optionType, IPAddress address)
+        protected Task SerializeIPAddress(Stream stream, DhcpOptionType optionType, IPAddress address)
         {
             var buffer = new byte[]
             {
@@ -113,7 +113,7 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        protected Task SerializeIPAddressList(Stream stream, DHCPOptionType optionType, List<IPAddress> addresses)
+        protected Task SerializeIPAddressList(Stream stream, DhcpOptionType optionType, List<IPAddress> addresses)
         {
             var buffer = new byte[2 + (4 * addresses.Count)];
             buffer[0] = Convert.ToByte(optionType);
@@ -124,12 +124,12 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        static protected Task SerializeTimeSpan(Stream stream, DHCPOptionType optionType, TimeSpan timeSpan)
+        static protected Task SerializeTimeSpan(Stream stream, DhcpOptionType optionType, TimeSpan timeSpan)
         {
             return SerializeInt32(stream, optionType, Convert.ToInt32(timeSpan.TotalSeconds));
         }
 
-        static protected Task SerializeUInt8(Stream stream, DHCPOptionType optionType, byte value)
+        static protected Task SerializeUInt8(Stream stream, DhcpOptionType optionType, byte value)
         {
             var buffer = new byte[] {
                 Convert.ToByte(optionType),
@@ -140,7 +140,7 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        static protected Task SerializeUInt16(Stream stream, DHCPOptionType optionType, UInt16 value)
+        static protected Task SerializeUInt16(Stream stream, DhcpOptionType optionType, UInt16 value)
         {
             var buffer = new byte[] {
                 Convert.ToByte(optionType),
@@ -153,7 +153,7 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        static protected Task SerializeUInt32(Stream stream, DHCPOptionType optionType, UInt32 value)
+        static protected Task SerializeUInt32(Stream stream, DhcpOptionType optionType, UInt32 value)
         {
             var buffer = new byte[] {
                 Convert.ToByte(optionType),
@@ -166,7 +166,7 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        static protected Task SerializeInt32(Stream stream, DHCPOptionType optionType, Int32 value)
+        static protected Task SerializeInt32(Stream stream, DhcpOptionType optionType, Int32 value)
         {
             var buffer = new byte[] {
                 Convert.ToByte(optionType),
@@ -179,7 +179,7 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        static protected Task SerializeASCII(Stream stream, DHCPOptionType optionType, string value)
+        static protected Task SerializeASCII(Stream stream, DhcpOptionType optionType, string value)
         {
             var buffer = new byte[2 + value.Length];
             buffer[0] = Convert.ToByte(optionType);
@@ -191,11 +191,11 @@ namespace Pixey.Dhcp.Options
             return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        protected Task SerializeBytes(Stream stream, DHCPOptionType optionType, byte[] value)
+        protected Task SerializeBytes(Stream stream, DhcpOptionType optionType, byte[] value)
         {
             var buffer = new byte[2 + value.Length];
             buffer[0] = Convert.ToByte(optionType);
-            buffer[1] = Convert.ToByte(2 + value.Length);
+            buffer[1] = Convert.ToByte(value.Length);
 
             Array.Copy(value, 0, buffer, 2, value.Length);
 

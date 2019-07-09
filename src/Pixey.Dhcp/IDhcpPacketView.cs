@@ -28,7 +28,7 @@ namespace Pixey.Dhcp
         List<IPAddress> WINSServer { get; set; }
         IPAddress NextServerIP { get; set; }
         List<IPAddress> NTPServers { get; set; }
-        List<DHCPOptionType> ParameterList { get; set; }
+        List<DhcpOptionType> ParameterList { get; set; }
         IPAddress RelayAgentIP { get; set; }
         TimeSpan RebindingTimeValue { get; set; }
         byte[] RelayAgentCircuitId { get; set; }

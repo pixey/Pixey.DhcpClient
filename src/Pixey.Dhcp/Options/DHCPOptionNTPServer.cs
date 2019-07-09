@@ -51,7 +51,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeIPAddressList(stream, DHCPOptionType.NTPServers, NTPServers);
+            return SerializeIPAddressList(stream, DhcpOptionType.NTPServers, NTPServers);
         }
     }
 }
