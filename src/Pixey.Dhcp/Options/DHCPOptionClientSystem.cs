@@ -1,23 +1,24 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionClientSystem : DHCPOption
+    internal class DHCPOptionClientSystem : DHCPOption
     {
-        public string ClientSystem { get; set; }
+        public ClientSystem ClientSystem { get; set; }
 
-        public DHCPOptionClientSystem(string tftpBootfile)
+        public DHCPOptionClientSystem(ClientSystem clientSystem)
         {
-            ClientSystem = tftpBootfile;
+            ClientSystem = clientSystem;
         }
 
         public DHCPOptionClientSystem(int optionLength, byte[] buffer, long offset)
         {
-            ClientSystem = Encoding.ASCII.GetString(buffer, Convert.ToInt32(offset), optionLength);
+            var value = Read16UnsignedBE(buffer, offset);
+
+            ClientSystem = (ClientSystem) Convert.ToInt32(value);
         }
 
         public override string ToString()
@@ -27,7 +28,7 @@ namespace Pixey.Dhcp.Options
 
         public override Task Serialize(Stream stream)
         {
-            return SerializeASCII(stream, DHCPOptionType.ClientSystem, ClientSystem);
+            return SerializeInt32(stream, DHCPOptionType.ClientSystem, (int)ClientSystem);
         }
     }
 }

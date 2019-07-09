@@ -41,6 +41,7 @@ namespace Pixey.Dhcp
         string TFTPBootfile { get; set; }
         string TFTPServer { get; set; }
         string UserClass { get; set; }
+        ClientSystem ClientSystem { get; set; }
         List<IPAddress> TFTPServer150 { get; set; }
         TimeSpan TimeElapsed { get; set; }
         TimeSpan TimeOffset { get; set; }

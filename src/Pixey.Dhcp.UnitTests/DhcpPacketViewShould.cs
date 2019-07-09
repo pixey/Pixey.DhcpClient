@@ -14,7 +14,9 @@ namespace Pixey.Dhcp.UnitTests
         public static IEnumerable<object[]> ParseMessageTypeData = new List<object[]>
         {
             new object[]{ DhcpSamplePackets.Offer, DHCPMessageType.DHCPOFFER },
-            new object[]{ DhcpSamplePackets.Discover, DHCPMessageType.DHCPDISCOVER }
+            new object[]{ DhcpSamplePackets.Discover, DHCPMessageType.DHCPDISCOVER },
+            new object[]{ DhcpSamplePackets.Request, DHCPMessageType.DHCPREQUEST },
+            new object[]{ DhcpSamplePackets.Ack, DHCPMessageType.DHCPACK }
         };
 
         [Theory]
@@ -111,6 +113,21 @@ namespace Pixey.Dhcp.UnitTests
 
             var actualEthernetAddress = Assert.IsType<EthernetClientHardwareAddress>(packetView.ClientHardwareAddress);
             Assert.Equal(expectedAddress.Address, actualEthernetAddress.Address);
+        }
+
+        public static IEnumerable<object[]> ClientSystemTestData = new List<object[]>
+        {
+            new object[] { DhcpSamplePackets.DiscoverLegacyBiosX86, ClientSystem.Intelx86PC },
+            new object[] { DhcpSamplePackets.DiscoverEfiX64, ClientSystem.EFI_BC }
+        };
+
+        [Theory]
+        [MemberData(nameof(ClientSystemTestData))]
+        public void ParseClientSystem(byte[] packetBytes, ClientSystem expectedClientSystem)
+        {
+            var packetView = new DhcpPacketView(packetBytes);
+
+            Assert.Equal(expectedClientSystem, packetView.ClientSystem);
         }
 
         //[Fact]

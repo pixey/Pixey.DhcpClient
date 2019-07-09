@@ -668,9 +668,27 @@ namespace Pixey.Dhcp
                 var record = Packet.Options.OfType<DHCPOptionUserClass>().FirstOrDefault();
 
                 if (record == null)
-                    Packet.Options.Add(new DHCPOptionTFTPBootfile(value));
+                    Packet.Options.Add(new DHCPOptionUserClass(value));
                 else
                     record.UserClass = value;
+            }
+        }
+
+        public ClientSystem ClientSystem
+        {
+            get
+            {
+                var record = Packet.Options.OfType<DHCPOptionClientSystem>().FirstOrDefault();
+                return (record == null) ? 0 : record.ClientSystem;
+            }
+            set
+            {
+                var record = Packet.Options.OfType<DHCPOptionClientSystem>().FirstOrDefault();
+
+                if (record == null)
+                    Packet.Options.Add(new DHCPOptionClientSystem(value));
+                else
+                    record.ClientSystem = value;
             }
         }
 
