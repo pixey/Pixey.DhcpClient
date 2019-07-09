@@ -29,7 +29,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionRelayAgentInformation : DHCPOption
+    public class DHCPOptionRelayAgentInformation : DhcpOption
     {
         private byte[] _agentCircuitId = new byte[0];
         public byte[] AgentCircuitId

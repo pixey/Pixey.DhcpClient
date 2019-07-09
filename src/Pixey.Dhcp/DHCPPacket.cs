@@ -7,7 +7,7 @@ using Pixey.Dhcp.Options;
 
 namespace Pixey.Dhcp
 {
-    public class DhcpPacket
+    internal class DhcpPacket
     {
         public const UInt32 DhcpMagicNumber = 0x63825363;
 
@@ -26,6 +26,8 @@ namespace Pixey.Dhcp
         public string sname { get; set; }
         public string file { get; set; }
         public UInt32 magicNumber { get; set; }
-        public List<DHCPOption> Options { get; set; } = new List<DHCPOption>();
+        public List<DhcpOption> Options { get; set; } = new List<DhcpOption>();
+
+
     };
 }

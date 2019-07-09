@@ -159,12 +159,12 @@ namespace Pixey.Dhcp.UnitTests
             expectedPacketView.BroadcastAddress = IPAddress.Parse("192.168.1.6");
             expectedPacketView.BroadcastFlag = true;
             expectedPacketView.ClassId = new byte[] { 0x0c, 0xaa, 0x84 };
-            expectedPacketView.ClasslessStaticRoutes = new List<DHCPOptionClasslessStaticRoute.RouteEntry>
+            expectedPacketView.ClasslessStaticRoutes = new List<DhcpOptionClasslessStaticRoute.RouteEntry>
             {
-                new DHCPOptionClasslessStaticRoute.RouteEntry
+                new DhcpOptionClasslessStaticRoute.RouteEntry
                 {
                     NextHop = IPAddress.Parse("192.168.1.7"),
-                    Prefix = new DHCPOptionClasslessStaticRoute.NetworkPrefix
+                    Prefix = new DhcpOptionClasslessStaticRoute.NetworkPrefix
                     {
                         Length = 28,
                         Prefix = IPAddress.Parse("192.168.1.8")

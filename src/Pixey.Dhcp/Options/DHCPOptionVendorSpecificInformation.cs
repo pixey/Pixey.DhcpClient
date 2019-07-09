@@ -32,7 +32,7 @@ using Pixey.Dhcp.Options.VendorSpecificInformation;
 namespace Pixey.Dhcp.Options
 {
     // TODO : Full testing. I implemented this just to make sure the structure is in place.
-    public class DHCPOptionVendorSpecificInformation : DHCPOption
+    public class DHCPOptionVendorSpecificInformation : DhcpOption
     {
         public List<DHCPVendorSpecificInformation> SubOptions { get; set; } = new List<DHCPVendorSpecificInformation>();
         private Dictionary<byte, Type> VSISuboptionTypes = new Dictionary<byte, Type>();

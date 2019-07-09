@@ -6,7 +6,7 @@ using Pixey.Dhcp.HardwareAddressTypes;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionClientId : DHCPOption
+    public class DHCPOptionClientId : DhcpOption
     {
         public HardwareAddressType IdType { get; set; }
 

@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionIPAddressLeaseTime : DHCPOption
+    public class DHCPOptionIPAddressLeaseTime : DhcpOption
     {
         public TimeSpan LeaseTime { get; set; }
 

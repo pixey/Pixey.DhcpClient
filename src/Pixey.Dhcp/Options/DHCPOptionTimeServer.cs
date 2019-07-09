@@ -29,7 +29,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionTimeServer : DHCPOption
+    public class DHCPOptionTimeServer : DhcpOption
     {
         // TODO : Deep copy
         public List<IPAddress> TimeServers { get; set; } = new List<IPAddress>();

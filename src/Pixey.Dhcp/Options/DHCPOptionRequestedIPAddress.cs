@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionRequestedIPAddress : DHCPOption
+    public class DHCPOptionRequestedIPAddress : DhcpOption
     {
         public IPAddress RequestedIP { get; set; } = IPAddress.Any;
 

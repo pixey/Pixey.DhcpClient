@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionSubnetMask : DHCPOption
+    public class DHCPOptionSubnetMask : DhcpOption
     {
         public IPAddress SubnetMask { get; set; } = IPAddress.Any;
 

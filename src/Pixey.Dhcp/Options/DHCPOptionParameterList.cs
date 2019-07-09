@@ -29,7 +29,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionParameterList : DHCPOption
+    public class DHCPOptionParameterList : DhcpOption
     {
         private List<DhcpOptionType> _parameterList = new List<DhcpOptionType>();
         public List<DhcpOptionType> ParameterList

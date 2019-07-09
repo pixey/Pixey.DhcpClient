@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionRenewalTimeValue : DHCPOption
+    public class DHCPOptionRenewalTimeValue : DhcpOption
     {
         public TimeSpan RenewalTime { get; set; }
 

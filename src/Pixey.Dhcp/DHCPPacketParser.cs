@@ -73,7 +73,7 @@ namespace Pixey.Dhcp
             return result;
         }
 
-        private static byte[] GetVendorClassId(List<DHCPOption>options)
+        private static byte[] GetVendorClassId(List<DhcpOption>options)
         {
             var classIdOption = options.Where(x => x is DHCPOptionClassId).FirstOrDefault();
 
@@ -83,7 +83,7 @@ namespace Pixey.Dhcp
             return (classIdOption as DHCPOptionClassId).ClassId;
         }
 
-        private static void SetVendorClassId(List<DHCPOption>options, byte [] classId)
+        private static void SetVendorClassId(List<DhcpOption>options, byte [] classId)
         {
             var vsiOption = options.Where(x => x is DHCPOptionVendorSpecificInformation).FirstOrDefault();
 
@@ -133,7 +133,7 @@ namespace Pixey.Dhcp
             }
         }
 
-        static DHCPOption ParseDHCPOption(int optionNumber, int optionLength, byte [] buffer, long offset)
+        static DhcpOption ParseDHCPOption(int optionNumber, int optionLength, byte [] buffer, long offset)
         {
             switch((DhcpOptionType)optionNumber)
             {
@@ -148,7 +148,7 @@ namespace Pixey.Dhcp
                 case DhcpOptionType.ClassId:
                     return new DHCPOptionClassId(optionLength, buffer, offset);
                 case DhcpOptionType.ClasslessStaticRouteOption:
-                    return new DHCPOptionClasslessStaticRoute(optionLength, buffer, offset);
+                    return new DhcpOptionClasslessStaticRoute(optionLength, buffer, offset);
                 case DhcpOptionType.ClientId:
                     return new DHCPOptionClientId(optionLength, buffer, offset);
                 case DhcpOptionType.DHCPMaxMsgSize:

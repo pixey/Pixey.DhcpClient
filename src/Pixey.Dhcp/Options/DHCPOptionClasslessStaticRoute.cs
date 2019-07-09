@@ -1,26 +1,4 @@
-﻿/// The MIT License(MIT)
-/// 
-/// Copyright(c) 2017 Conscia Norway AS
-/// 
-/// Permission is hereby granted, free of charge, to any person obtaining a copy
-/// of this software and associated documentation files (the "Software"), to deal
-/// in the Software without restriction, including without limitation the rights
-/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-/// copies of the Software, and to permit persons to whom the Software is
-/// furnished to do so, subject to the following conditions:
-/// 
-/// The above copyright notice and this permission notice shall be included in all
-/// copies or substantial portions of the Software.
-/// 
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-/// SOFTWARE.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,30 +8,17 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionClasslessStaticRoute : DHCPOption
+    internal class DhcpOptionClasslessStaticRoute : DhcpOption
     {
-        public class NetworkPrefix
-        {
-            public IPAddress Prefix { get; set; }
-            public int Length { get; set; }
-        }
-
-        public class RouteEntry
-        {
-            public NetworkPrefix Prefix { get; set; }
-            public IPAddress NextHop { get; set; }
-        };
-
-        // TODO : Deep copy
-        public List<RouteEntry> Entries { get; set; } = new List<RouteEntry>();
-
-        public DHCPOptionClasslessStaticRoute(List<RouteEntry> entries)
+        public DhcpOptionClasslessStaticRoute(List<ClasslessStaticRoute> entries)
         {
             Entries = entries;
         }
 
-        public DHCPOptionClasslessStaticRoute(int optionLength, byte[] buffer, long offset)
+        public DhcpOptionClasslessStaticRoute(int optionLength, byte[] buffer, long offset)
         {
+            Entries = new List<ClasslessStaticRoute>();
+
             int index = 0;
             while(index < optionLength)
             {
@@ -69,23 +34,18 @@ namespace Pixey.Dhcp.Options
                 var nextHop = ReadIPAddress(buffer, index + offset);
                 index += 4;
 
-                Entries.Add(
-                    new RouteEntry {
-                        Prefix = new NetworkPrefix {
-                            Prefix = prefixAddress,
-                            Length = prefixLength
-                        },
-                        NextHop = nextHop
-                    });
+                Entries.Add(new ClasslessStaticRoute(new NetworkPrefix(prefixAddress, prefixLength), nextHop));
             }
         }
+
+        public List<ClasslessStaticRoute> Entries { get; }
 
         public override string ToString()
         {
             return "Classless static routes - " + string.Join(",", Entries.Select(x => "{" + x.Prefix.Prefix.ToString() + "/" + x.Prefix.Length.ToString() + "->" + x.NextHop.ToString() + "}"));
         }
 
-        private byte[] SerializeEntry(RouteEntry entry)
+        private byte[] SerializeEntry(ClasslessStaticRoute entry)
         {
             var byteLength = (entry.Prefix.Length / 8) + 1;
             var result = new byte[1 + byteLength + 4];

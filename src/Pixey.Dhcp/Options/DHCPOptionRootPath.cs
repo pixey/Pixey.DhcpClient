@@ -28,7 +28,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionRootPath : DHCPOption
+    public class DHCPOptionRootPath : DhcpOption
     {
         public string RootPath { get; set; }
 

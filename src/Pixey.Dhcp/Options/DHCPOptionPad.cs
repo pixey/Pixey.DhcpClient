@@ -6,7 +6,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionPad : DHCPOption
+    public class DHCPOptionPad : DhcpOption
     {
         public byte[] Data { get; set; }
 

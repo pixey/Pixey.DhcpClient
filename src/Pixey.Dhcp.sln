@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pixey.Dhcp.UnitTests", "Pix
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pixey.Dhcp.IntegrationTests", "Pixey.Dhcp.IntegrationTests\Pixey.Dhcp.IntegrationTests.csproj", "{B9F17BA9-06EA-436F-AADB-915C954A5398}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old", "Old", "{BD56A925-2B1A-40D7-A1C7-ECF469E067A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1B80561B-0E07-4C6B-93CE-442A6A5E763C} = {BD56A925-2B1A-40D7-A1C7-ECF469E067A6}
+		{21C31F69-AA65-4C1F-8666-68E640E7D02F} = {BD56A925-2B1A-40D7-A1C7-ECF469E067A6}
+		{0E59554F-1B8D-414A-B2B1-75582DC7D3DA} = {BD56A925-2B1A-40D7-A1C7-ECF469E067A6}
+		{B9F17BA9-06EA-436F-AADB-915C954A5398} = {BD56A925-2B1A-40D7-A1C7-ECF469E067A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8753BD66-2787-4C80-A5A0-808255984B54}

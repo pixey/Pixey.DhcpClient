@@ -28,7 +28,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionTFTPServerName : DHCPOption
+    public class DHCPOptionTFTPServerName : DhcpOption
     {
         public string TFTPServerName { get; set; }
 

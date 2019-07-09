@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionTimeOffset : DHCPOption
+    public class DHCPOptionTimeOffset : DhcpOption
     {
         public TimeSpan TimeOffset { get; set; }
 

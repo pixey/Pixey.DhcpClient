@@ -5,7 +5,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    internal class DHCPOptionClientSystem : DHCPOption
+    internal class DHCPOptionClientSystem : DhcpOption
     {
         public ClientSystem ClientSystem { get; set; }
 

@@ -15,7 +15,7 @@ namespace Pixey.Dhcp
     {
         public const int DhcpBroadcastFlag = 0x8000;
 
-        public DhcpPacket Packet { get; set; }
+        internal DhcpPacket Packet { get; set; }
 
         public DhcpPacketView(DHCPMessageType messageType)
         {
@@ -38,7 +38,7 @@ namespace Pixey.Dhcp
             Packet = DhcpPacketParser.Parse(buffer);
         }
 
-        public DhcpPacketView(DhcpPacket packet)
+        internal DhcpPacketView(DhcpPacket packet)
         {
             Packet = packet;
         }
@@ -189,18 +189,18 @@ namespace Pixey.Dhcp
             }
         }
 
-        public List<DHCPOptionClasslessStaticRoute.RouteEntry> ClasslessStaticRoutes
+        public List<ClasslessStaticRoute> ClasslessStaticRoutes
         {
             get
             {
-                var record = (DHCPOptionClasslessStaticRoute)Packet.Options.Where(x => x.GetType() == typeof(DHCPOptionClasslessStaticRoute)).FirstOrDefault();
+                var record = (DhcpOptionClasslessStaticRoute)Packet.Options.Where(x => x.GetType() == typeof(DhcpOptionClasslessStaticRoute)).FirstOrDefault();
                 return (record == null) ? null : record.Entries;
             }
             set
             {
-                var record = (DHCPOptionClasslessStaticRoute)Packet.Options.Where(x => x.GetType() == typeof(DHCPOptionClasslessStaticRoute)).FirstOrDefault();
+                var record = (DhcpOptionClasslessStaticRoute)Packet.Options.Where(x => x.GetType() == typeof(DhcpOptionClasslessStaticRoute)).FirstOrDefault();
                 if (record == null)
-                    Packet.Options.Add(new DHCPOptionClasslessStaticRoute(value));
+                    Packet.Options.Add(new DhcpOptionClasslessStaticRoute(value));
                 else
                     record.Entries = value;
             }
@@ -208,9 +208,9 @@ namespace Pixey.Dhcp
 
         public void AddClasslessStaticRoute(IPAddress prefix, int prefixLength, IPAddress nextHop)
         {
-            var newEntry = new DHCPOptionClasslessStaticRoute.RouteEntry
+            var newEntry = new DhcpOptionClasslessStaticRoute.RouteEntry
             {
-                Prefix = new DHCPOptionClasslessStaticRoute.NetworkPrefix
+                Prefix = new DhcpOptionClasslessStaticRoute.NetworkPrefix
                 {
                     Prefix = prefix,
                     Length = prefixLength
@@ -218,9 +218,9 @@ namespace Pixey.Dhcp
                 NextHop = nextHop
             };
 
-            var record = (DHCPOptionClasslessStaticRoute)Packet.Options.Where(x => x.GetType() == typeof(DHCPOptionClasslessStaticRoute)).FirstOrDefault();
+            var record = (DhcpOptionClasslessStaticRoute)Packet.Options.Where(x => x.GetType() == typeof(DhcpOptionClasslessStaticRoute)).FirstOrDefault();
             if (record == null)
-                Packet.Options.Add(new DHCPOptionClasslessStaticRoute(new List<DHCPOptionClasslessStaticRoute.RouteEntry> { newEntry }));
+                Packet.Options.Add(new DhcpOptionClasslessStaticRoute(new List<DhcpOptionClasslessStaticRoute.RouteEntry> { newEntry }));
             else
                 record.Entries.Add(newEntry);
         }

@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionUnrecognized : DHCPOption
+    public class DHCPOptionUnrecognized : DhcpOption
     {
         DhcpOptionType OptionNumber;
         public byte[] Data { get; set; }

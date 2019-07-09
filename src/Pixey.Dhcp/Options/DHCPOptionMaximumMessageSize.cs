@@ -27,7 +27,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionMaximumMessageSize : DHCPOption
+    public class DHCPOptionMaximumMessageSize : DhcpOption
     {
         public int MaximumMessageSize { get; set; }
 

@@ -29,7 +29,7 @@ using Pixey.Dhcp.Enums;
 
 namespace Pixey.Dhcp.Options
 {
-    public class DHCPOptionRouter : DHCPOption
+    public class DHCPOptionRouter : DhcpOption
     {
         // TODO : Deep copy on access
         public List<IPAddress> Routers { get; set; } = new List<IPAddress>();
