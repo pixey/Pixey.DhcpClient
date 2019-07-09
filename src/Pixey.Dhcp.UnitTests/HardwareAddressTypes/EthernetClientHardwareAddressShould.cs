@@ -1,5 +1,4 @@
-﻿using System;
-using Pixey.Dhcp.HardwareAddressTypes;
+﻿using Pixey.Dhcp.HardwareAddressTypes;
 using Xunit;
 
 namespace Pixey.Dhcp.UnitTests.HardwareAddressTypes

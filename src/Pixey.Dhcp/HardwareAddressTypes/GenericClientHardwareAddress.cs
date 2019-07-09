@@ -1,26 +1,4 @@
-﻿/// The MIT License(MIT)
-/// 
-/// Copyright(c) 2017 Conscia Norway AS
-/// 
-/// Permission is hereby granted, free of charge, to any person obtaining a copy
-/// of this software and associated documentation files (the "Software"), to deal
-/// in the Software without restriction, including without limitation the rights
-/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-/// copies of the Software, and to permit persons to whom the Software is
-/// furnished to do so, subject to the following conditions:
-/// 
-/// The above copyright notice and this permission notice shall be included in all
-/// copies or substantial portions of the Software.
-/// 
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-/// SOFTWARE.
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 
@@ -28,17 +6,20 @@ namespace Pixey.Dhcp.HardwareAddressTypes
 {
     public class GenericClientHardwareAddress : ClientHardwareAddress
     {
-        public byte[] HardwareAddress;
-        public GenericClientHardwareAddress(byte [] buffer, long offset, long length)
-        {
-            HardwareAddress = new byte[length];
-            Array.Copy(buffer, offset, HardwareAddress, 0, length);
-        }
+        private readonly byte[] _hardwareAddress;
 
         public GenericClientHardwareAddress(byte[] buffer)
         {
-            HardwareAddress = new byte[buffer.Length];
-            Array.Copy(buffer, 0, HardwareAddress, 0, buffer.Length);
+            _hardwareAddress = new byte[buffer.Length];
+
+            Array.Copy(buffer, 0, _hardwareAddress, 0, buffer.Length);
+        }
+
+        public GenericClientHardwareAddress(byte[] buffer, long offset, long length)
+        {
+            _hardwareAddress = new byte[length];
+
+            Array.Copy(buffer, offset, _hardwareAddress, 0, length);
         }
 
         public override int AddressLength
@@ -46,17 +27,28 @@ namespace Pixey.Dhcp.HardwareAddressTypes
             get { return HardwareAddress.Length; }
         }
 
+        public byte[] HardwareAddress
+        {
+            get => _hardwareAddress;
+        }
+
         public override string ToString()
         {
-            if (Encoding.ASCII.GetChars(HardwareAddress, 0, HardwareAddress.Length).Select(x => Char.IsControl(x)).Where(x => x).FirstOrDefault())
-                return "Generic - " + String.Join(",", (HardwareAddress.Select(x => x.ToString("X2"))));
-            else
-                return "Generic - " + Encoding.ASCII.GetString(HardwareAddress);
+            var hasControlChars = Encoding.ASCII
+                .GetChars(_hardwareAddress, 0, _hardwareAddress.Length)
+                .Any(char.IsControl);
+
+            if (hasControlChars)
+            {
+                return "Generic - " + string.Join(",", _hardwareAddress.Select(x => x.ToString("X2")));
+            }
+
+            return "Generic - " + Encoding.ASCII.GetString(_hardwareAddress);
         }
 
         public override byte[] GetBytes()
         {
-            return HardwareAddress;
+            return _hardwareAddress;
         }
 
         public override bool Equals(object obj)
@@ -65,12 +57,12 @@ namespace Pixey.Dhcp.HardwareAddressTypes
             if (other == null)
                 return false;
 
-            return HardwareAddress.SequenceEqual(other.HardwareAddress);
+            return _hardwareAddress.SequenceEqual(other.HardwareAddress);
         }
 
         public override int GetHashCode()
         {
-            return HardwareAddress.GetHashCode();
+            return _hardwareAddress.GetHashCode();
         }
 
         public override ClientHardwareAddress Clone()

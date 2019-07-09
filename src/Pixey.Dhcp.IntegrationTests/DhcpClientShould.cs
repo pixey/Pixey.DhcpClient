@@ -1,7 +1,10 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Pixey.Dhcp.HardwareAddressTypes;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,19 +21,33 @@ namespace Pixey.Dhcp.IntegrationTests
         }
 
         [Fact]
+        public void Wrapper()
+        {
+            ReturnDhcpPackets().Wait();
+        }
+
         public async Task ReturnDhcpPackets()
         {
             //using (var client = new DhcpClient())
-            var client = new DhcpClient();
-            {
-                _testOutput.WriteLine("Starting");
+            var logFactory = new NullLoggerFactory();
 
-                var macAddress = new EthernetClientHardwareAddress("de:ad:c0:de:ca:fe");
-                var results = await client.DiscoverDhcpServers(macAddress).ConfigureAwait(false);
+            using (var listener = new DhcpListener(logFactory.CreateLogger<DhcpListener>()))
+            {
+                var client = new DhcpClient(listener, logFactory.CreateLogger<DhcpClient>());
+
+                _testOutput.WriteLine("Starting...");
+
+                var parameters = new DhcpDiscoveryParameters();
+                parameters.ClientHardwareAddress = new EthernetClientHardwareAddress("de:ad:c0:de:ca:fe");
+
+                var results = await client.DiscoverDhcpServers(parameters, CancellationToken.None).ConfigureAwait(false);
 
                 _testOutput.WriteLine("Count: " + results.Count);
-                _testOutput.WriteLine("IP1: " + results[0].YourIP);
-                _testOutput.WriteLine("IP2: " + results[1].YourIP);
+
+                foreach (var dhcpPacketView in results)
+                {
+                    _testOutput.WriteLine("IP: " + dhcpPacketView.YourIP);
+                }
 
                 _testOutput.WriteLine("Finished");
 

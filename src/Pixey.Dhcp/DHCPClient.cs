@@ -2,157 +2,95 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Pixey.Dhcp.Enums;
-using Pixey.Dhcp.HardwareAddressTypes;
+using Pixey.Dhcp.Extensions;
 
 namespace Pixey.Dhcp
 {
-    public class DhcpClient // : IDhcpClient
+    public class DhcpClient : IDhcpClient
     {
         private const int DhcpServerPort = 67;
-        private const int DhcpClientPort = 68;
 
-        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(20);
         private static readonly IPEndPoint BroadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, DhcpServerPort);
 
-        private readonly IPEndPoint _udpClientEndpoint;
+        private readonly IDhcpListener _dhcpListener;
+        private readonly ILogger<DhcpClient> _logger;
+        private readonly Random _random;
 
-        public DhcpClient()
+        public DhcpClient(IDhcpListener dhcpListener, ILogger<DhcpClient> logger)
         {
-            _udpClientEndpoint = new IPEndPoint(IPAddress.Any, DhcpClientPort);
+            _dhcpListener = dhcpListener;
+            _logger = logger;
+            _random = new Random();
         }
 
-        public async Task<IReadOnlyList<DhcpPacketView>> DiscoverDhcpServers(ClientHardwareAddress clientHardwareAddress)
+        /// <summary>
+        /// This method is NOT thread safe
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public async Task<IReadOnlyList<IDhcpPacketView>> DiscoverDhcpServers(DhcpDiscoveryParameters parameters, CancellationToken ct)
         {
-            try
-            {
-                var results = new List<DhcpPacketView>();
+            var results = new List<IDhcpPacketView>();
+            var transactionId = GenerateTransactionId();
 
-                var udpClient = new UdpClient();
+            var receptionDelegate = new EventHandler<DhcpPacketViewEventArgs>(
+                (sender, args) =>
                 {
-                    udpClient.EnableBroadcast = true;
-                    udpClient.ExclusiveAddressUse = false;
+                    if (args.DhcpPacketView.TransactionId == transactionId)
+                    {
+                        _logger.LogDebug("Received a DHCP Packet for transaction {0}", transactionId);
 
-                    udpClient.Client.Bind(_udpClientEndpoint);
-                    // udpClient.Connect(BroadcastEndpoint);
+                        results.Add(args.DhcpPacketView);
+                    }
+                });
 
-                    //var listenTask = udpClient.ReceiveAsync();
+            _dhcpListener.PacketReceived += receptionDelegate;
+            _dhcpListener.StartIfNotRunning();
 
-                    var from = new IPEndPoint(0, 0);
-
-                    //Task.Run(() =>
-                    //{
-                    //    while (true)
-                    //    {
-                    //        var recvBuffer = udpClient.Receive(ref from);
-                    //        Console.WriteLine(Encoding.UTF8.GetString(recvBuffer));
-                    //    }
-                    //});
-
-                    //udpClient.BeginReceive(result =>
-                    //{
-                    //    var from = new IPEndPoint(0, 0);
-                    //    var data = udpClient.EndReceive(result, ref from);
-
-                    //    var dhcpResult = new DHCPPacketView(data);
-
-                    //    Console.WriteLine("Dummy");
-                    //}, null);
-
-
-                    //Task.Factory.StartNew(() =>
-                    //{
-                    //    var bytes = udpClient.Receive(ref from);
-
-                    //    Console.WriteLine("Message received");
-                    //});
-
-                    //udpClient.ReceiveAsync()
-                    //    .ContinueWith(result =>
-                    //    {
-                    //        var bytes = result.Result;
-
-                    //        Console.WriteLine("Received response...");
-                    //    }).Start();
-
-                    Console.WriteLine("Sending discovery packet...");
-                    await SendDiscoveryPacket(udpClient, clientHardwareAddress); // TODO: Add architecture
-
-                    Console.WriteLine("Waiting to receive...");
-
-                    var bytes1 = udpClient.Receive(ref from);
-                    results.Add(new DhcpPacketView(bytes1));
-
-                    var bytes2 = udpClient.Receive(ref from);
-                    results.Add(new DhcpPacketView(bytes2));
-
-                    //IPEndPoint from = BroadcastEndpoint;
-                    //var responseBytes = udpClient.Receive(ref from);
-
-                    //if (!listenTask.Wait(Timeout))
-                    //{
-                    //    throw new TimeoutException();
-                    //}
-
-                    // return new DHCPPacketView(response.Buffer);
-
-                    return results;
-                    //return new DhcpPacketView(bytes);
-                }
-            }
-            catch (Exception e)
+            using (var udpClient = new UdpClient())
             {
-                // TODO: Throw custom exception
-                Console.WriteLine(e);
-                throw;
+                var broadcastPacket = CreateBroadcastPacket(parameters, transactionId);
+                var broadcastPacketBytes = await broadcastPacket.GetBytes().ConfigureAwait(false);
+
+                _logger.LogDebug("Sending broadcast DHCP Packet for transaction {0}", transactionId);
+
+                await udpClient
+                    .SendAsync(broadcastPacketBytes, broadcastPacketBytes.Length, BroadcastEndpoint)
+                    .WithCancellation(ct)
+                    .ConfigureAwait(false);
             }
+
+            await Task.Delay(parameters.Timeout, ct).ConfigureAwait(false);
+
+            _dhcpListener.PacketReceived -= receptionDelegate;
+
+            if (results.Count == 0)
+            {
+                throw new TimeoutException($"No DHCP response recieved for transaction {transactionId}.");
+            }
+
+            return results;
         }
 
-        public void Dispose()
+        private uint GenerateTransactionId()
         {
+            return (uint) _random.Next(100000, 100000000);
         }
 
-        private async Task SendDiscoveryPacket(UdpClient udpClient, ClientHardwareAddress clientHardwareAddress)
+        private DhcpPacketView CreateBroadcastPacket(DhcpDiscoveryParameters parameters, uint transactionId)
         {
             var discoveryPacketView = new DhcpPacketView(DHCPMessageType.DHCPDISCOVER);
-            var random = new Random();
 
-            discoveryPacketView.ClientHardwareAddress = clientHardwareAddress;
-            discoveryPacketView.TransactionId = (uint)random.Next(100000, 10000000);
+            discoveryPacketView.ClientHardwareAddress = parameters.ClientHardwareAddress;
+            discoveryPacketView.TransactionId = transactionId;
             discoveryPacketView.BroadcastFlag = true;
 
-
-            // Client architecture = Option 93      => ClientSystem
-            // User class = 77                      => UserClass, might need to be added
-
-            // discoveryPacket.ClassId = new byte[20];
-
-            var discoveryBytes = await discoveryPacketView.GetBytes();
-
-            //await udpClient.SendAsync(discoveryBytes, discoveryBytes.Length, BroadcastEndpoint).ConfigureAwait(false);
-            udpClient.Send(discoveryBytes, discoveryBytes.Length, BroadcastEndpoint);
+            return discoveryPacketView;
         }
-    }
-
-    //public interface IDhcpClient : IDisposable
-    //{
-    //    Task<DhcpPacketView> DiscoverDhcpServers(ClientHardwareAddress macAddress);
-    //}
-
-    public class DiscoveryParameters
-    {
-        public DiscoveryParameters()
-        {
-            // TODO: Set details
-        }
-
-        public string PhysicalAddress { get; set; }
-
-        public string ClientSystemArchitecture { get; set; }
-
-        public string UserClass { get; set; }
-
-        public TimeSpan Timeout { get; set; }
     }
 }

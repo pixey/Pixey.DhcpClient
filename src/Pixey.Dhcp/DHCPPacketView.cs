@@ -11,7 +11,7 @@ using Pixey.Dhcp.Options;
 
 namespace Pixey.Dhcp
 {
-    public class DhcpPacketView
+    public class DhcpPacketView : IDhcpPacketView
     {
         public const int DhcpBroadcastFlag = 0x8000;
 
